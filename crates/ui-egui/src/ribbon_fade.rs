@@ -431,8 +431,8 @@ fn in_force(ui: &Ui, config: &FadeConfig) -> FadeConfig {
 pub fn show<R>(ui: &mut Ui, id_salt: impl Hash + Debug, key: impl Hash + Debug, config: &FadeConfig, add_contents: impl FnOnce(&mut Ui) -> R) -> R {
     let config = in_force(ui, config);
     let ctx = ui.ctx().clone();
-    let id = Id::new(("ribbon_fade", id_salt));
-    let key = Id::new(key).value();
+    let id = Id::unique(("ribbon_fade", id_salt));
+    let key = Id::unique(key).value();
     let now = ui.input(|i| i.time);
     let pass = ctx.cumulative_pass_nr();
     let layer = ui.layer_id();
@@ -487,10 +487,10 @@ pub fn show<R>(ui: &mut Ui, id_salt: impl Hash + Debug, key: impl Hash + Debug, 
 pub fn indicator(ui: &Ui, id_salt: impl Hash + Debug, key: impl Hash + Debug, target: Rect, config: &FadeConfig) -> Rect {
     let config = in_force(ui, config);
     let ctx = ui.ctx();
-    let id = Id::new(("ribbon_fade_indicator", id_salt));
+    let id = Id::unique(("ribbon_fade_indicator", id_salt));
     let now = ui.input(|i| i.time);
     let pass = ctx.cumulative_pass_nr();
-    let (rect, running) = ctx.data_mut(|d| d.get_temp_mut_or_default::<Glide>(id).frame(Id::new(key).value(), target, now, pass, &config));
+    let (rect, running) = ctx.data_mut(|d| d.get_temp_mut_or_default::<Glide>(id).frame(Id::unique(key).value(), target, now, pass, &config));
     if running {
         ctx.request_repaint();
     }
@@ -499,7 +499,7 @@ pub fn indicator(ui: &Ui, id_salt: impl Hash + Debug, key: impl Hash + Debug, ta
 
 /// A fade is running in the fader `id_salt` (for tests and tools).
 pub fn is_fading(ctx: &egui::Context, id_salt: impl Hash + Debug) -> bool {
-    ctx.data(|d| d.get_temp::<State>(Id::new(("ribbon_fade", id_salt)))).is_some_and(|s| s.fade.is_running())
+    ctx.data(|d| d.get_temp::<State>(Id::unique(("ribbon_fade", id_salt)))).is_some_and(|s| s.fade.is_running())
 }
 
 #[cfg(test)]

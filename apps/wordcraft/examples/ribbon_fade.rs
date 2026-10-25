@@ -128,8 +128,8 @@ impl Demo {
                 let (_, r) = ui.allocate_space(vec2(text_w + 24.0, 30.0));
                 let resp = ui.interact(r, tab_id(i), Sense::click());
                 let active = self.tab == i;
-                // Screen readers hear a selectable tab, and whether it is the selected one.
-                resp.widget_info(|| egui::WidgetInfo::selected(egui::WidgetType::SelectableLabel, true, active, *name));
+                // Screen readers hear a tab, and whether it is the selected one.
+                resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Tab, true, active, *name));
                 if resp.hovered() && !active {
                     ui.painter().rect_filled(r.shrink2(vec2(0.0, 4.0)), 4.0, p.hover);
                 }
@@ -231,7 +231,7 @@ impl Demo {
 
 /// A tab's widget id, so the arrow keys can hand it the focus.
 fn tab_id(i: usize) -> egui::Id {
-    egui::Id::new(("demo_tab", i))
+    egui::Id::unique(("demo_tab", i))
 }
 
 /// One ribbon group: its buttons in columns of three, its title centred underneath.
